@@ -6,8 +6,10 @@ struct Node {
     int data;
     Node* next;
 
-    Node(int value) : data(value), next(nullptr) {} // Исправлено: передаем значение в конструктор
+    Node(int value) : data(value), next(nullptr) {}
 };
+
+short kol = 0;
 
 struct List {
     Node* front;
@@ -26,6 +28,43 @@ struct List {
         }
     }
 
+    void changeList() {
+        Node* current = front;
+        while (current != nullptr) {
+            if (current->data < 0) {
+                kol++;
+                Node* newNode = new Node(0); 
+                newNode->next = current->next;
+                current->next = newNode;
+                current = newNode; 
+            }
+            current = current->next;
+        }
+    }
+
+    void removeNum() {
+        Node* current = front;
+        Node* prev = nullptr;
+        while (current != nullptr) {
+            if (current->data < 0) {
+                if (prev == nullptr) { 
+                    front = current->next;
+                    delete current;
+                    current = front;
+                }
+                else {
+                    prev->next = current->next;
+                    delete current;
+                    current = prev->next;
+                }
+            }
+            else {
+                prev = current;
+                current = current->next;
+            }
+        }
+        last = prev;
+    }
     void remove() {
         if (front == nullptr)
             return;
@@ -36,13 +75,13 @@ struct List {
         delete temp;
     }
 
-    void print() { // Изменено: теперь выводит все элементы
+    void print() {
         Node* current = front;
         while (current != nullptr) {
             cout << current->data << " ";
             current = current->next;
         }
-        cout << endl; // Для удобства вывода
+        cout << endl;
     }
 
     bool isEmpty() {
@@ -66,13 +105,18 @@ int main() {
         }
     }
 
-    cout << "Числа: ";
-    myList.print(); // Выводим все числа
+    cout << "Список без изменений: ";
+    myList.print();
+    myList.changeList();
+    cout << "\nСписок с добавленными нулями после отрицательного числа: ";
+    myList.print();
+    myList.removeNum();
+    cout << "\nСписок с удаленными отрицательными числами: ";
+    myList.print();
+    cout << "\nКол-во отрицательных чисел: " << kol << endl;
 
-    // Удаляем элементы и выводим их
     while (!myList.isEmpty()) {
-        cout << "Удаленный элемент: " << myList.front->data << endl; // Выводим передний элемент
-        myList.remove(); // Удаляем передний элемент
+        myList.remove(); 
     }
 
     return 0;
